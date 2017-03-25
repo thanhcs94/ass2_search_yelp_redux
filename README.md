@@ -1,5 +1,4 @@
-# ass2_search_yelp_redux
-# Project 2 - *AwesomeYelp*
+#*AwesomeYelp* :  Project 2
 
 **AwesomeYelp** is a Yelp  *awesome* search app using the [Yelp API](https://www.yelp.com/developers/documentation/v3/business_search).
 
