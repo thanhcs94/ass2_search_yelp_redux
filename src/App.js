@@ -12,33 +12,56 @@ import {
     View,
     Navigator
 } from 'react-native';
-import SearchScreen  from './layout/Search';
+import SearchList  from './layout/Search/SearchList';
+import SearchFilter  from './layout/Search/SearchFilter';
 import Login  from './layout/Login';
-export default class App extends Component {
+import {connect} from 'react-redux';
+class App extends Component {
+
     renderScene(route, navigator) {
         switch (route.name) {
 
-            case "SearchScreen":
+            case "SearchList":
                 return (
-                    <SearchScreen/>
+                    <SearchList/>
                 )
 
-            case  "Login":
+            case  "SearchFilter":
                 return (
-                    <Login/>
+                    <SearchFilter/>
                 )
             default:
                 return {}
         }
     }
-
-
     render() {
+        /** check is login*/
+        const { isAuthenticated } = this.props;
+        console.log("isAuthenticated " +  JSON.stringify(this.props));
+        if (!isAuthenticated) {
+            return <SearchFilter/>;
+        }else{
+            console.log("data" +  JSON.stringify(this.props.user));
+        }
         return (
             <Navigator
-                initialRoute={{name:"Login"}}
+                initialRoute={{name:"SearchFilter"}}
                 renderScene={this.renderScene.bind(this)}
             />
         )
+
     }
 }
+const mapStateToProps = function(state) {
+    const { loginReducer } = state;
+    console.log("isAuthenticated mapStateToProps " + JSON.stringify(loginReducer));
+    // if(loginReducer.failure){
+    //     alert(loginReducer.errorMessage)
+    // }else{
+    //
+    // }
+    return {
+        isAuthenticated: loginReducer.isAuthenticated
+    }
+};
+export default connect(mapStateToProps)(App);

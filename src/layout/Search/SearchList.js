@@ -23,8 +23,6 @@ export default class SearchList extends Component {
                 <Text> Search List</Text>
                 <Text> Search List</Text>
                 <Text> Search List</Text>
-
-
             </View>
         );
     }

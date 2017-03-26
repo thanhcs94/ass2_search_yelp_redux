@@ -9,8 +9,17 @@ import {
     KeyboardAvoidingView,
     StatusBar
 } from 'react-native';
+import {connect} from 'react-redux'
+import {fetchDataLogin} from '../../actions/loginAction'
 
-export default class LoginForm extends Component {
+class LoginForm extends Component {
+    constructor(props){
+        super(props);
+        this.state ={
+            client_id: "tQyHUDn9ocxSt62kfaLS1w",
+            client_secret: "863nET7GMULkWMRaqCsnwV5xLwsmMv6TsQEsMxT3uoUMvV6mg6sCGXEO3XyccPUr"
+        };
+    }
     render() {
         return (
             <KeyboardAvoidingView behavior = "padding" style={styles.container}>
@@ -18,32 +27,49 @@ export default class LoginForm extends Component {
                     barStyle = "light-content"
                 />
                 <TextInput
-                    placeholder = "User name or email"
+                    placeholder = "Client Id"
                     placeholderTextColor = '#cccccc'
                     returnKeyType="next"
-                    keyboardType = "email-address"
                     autoCorrect = {false}
                     autoCapitalize = "none"
-                    onSubmitEditing = {()=> this.passwordInput.focus()}
+                    onSubmitEditing = {()=> this.client_secretInput.focus()}
+                    onChangeText={(text) => {this.setState({client_id: text})}}
+                    value={this.state.client_id}
                     style = {styles.input}>
                 </TextInput>
 
                 <TextInput
-                    placeholder ="Password"
+                    placeholder ="Client Secret"
                     placeholderTextColor ='#cccccc'
-                    secureTextEntry
                     returnKeyType="go"
-                    ref = {(input)=>this.passwordInput = input}
+                    ref = {(input)=>this.client_secretInput = input}
+                    onChangeText={(client_secret) => {this.setState({client_secret: client_secret})}}
+                    value={this.state.client_secret}
                     style = {styles.input}>
                 </TextInput>
 
-                <TouchableOpacity style = {styles.buttonContainer}>
-                    <Text style ={styles.loginbutton}>LOGIN</Text>
+                <TouchableOpacity style = {styles.buttonContainer} onPress = {()=> this.props.fetchDataLogin(this.state.client_id, this.state.client_secret)} >
+                    <Text style ={styles.loginButton}>LOGIN</Text>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
         );
     }
 }
+
+
+function mapStateToProps (state) {
+    return {
+
+    }
+}
+
+function mapDispatchToProps (dispatch) {
+
+    return {
+        fetchDataLogin: (clientId, clientSecret) => dispatch(fetchDataLogin(clientId, clientSecret))
+    }
+}
+
 
 const styles = StyleSheet.create({
     container: {
@@ -64,9 +90,11 @@ const styles = StyleSheet.create({
         marginTop:15,
         marginBottom:20
     },
-    loginbutton:{
+    loginButton:{
         color: '#ffffff',
         textAlign:'center',
         fontWeight:'700'
     }
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)
