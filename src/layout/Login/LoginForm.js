@@ -16,8 +16,8 @@ class LoginForm extends Component {
     constructor(props){
         super(props);
         this.state ={
-            client_id: "tQyHUDn9ocxSt62kfaLS1w",
-            client_secret: "863nET7GMULkWMRaqCsnwV5xLwsmMv6TsQEsMxT3uoUMvV6mg6sCGXEO3XyccPUr"
+            client_id: "qDPlyf_EBtljgqKxPALx6Q",
+            client_secret: "RlFVBx8XonMjZcNnal3e827ooycXR7Pc4JngdpbM6UmdbW61GEfiss22OMRK0p4M"
         };
     }
     render() {

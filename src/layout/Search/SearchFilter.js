@@ -11,36 +11,44 @@ import {
     Text,
     View,
     StatusBar,
-    Switch,
     Picker,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from 'react-native';
-const DISTANCE_OPTION = ["10 mile", "20 mile", "30 mile"];
-const SORT_BY_OPTION = ["Newest", "Popular", "Nearest", "Top rate"];
+import data      from '../../categories.json'
+import { Switch } from 'react-native-switch';
+const DISTANCE_OPTION = ["0.3 miles", "1 mile", "5 miles", "20 miles"];
+const SORT_BY_OPTION = ["best_match", "rating", "review_count", "distance"];
 var countClickDistance = 0;
 var countClickSortBy = 0;
+var categorySize = 0;
+var categoryStepSize = 3;
 export default class SearchFilter extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         viewAll = [];
+        dataCategory = [];
         this.state = {
-            viewDistance:viewAll,
-            viewSortBy:viewAll,
+            viewDistance: viewAll,
+            viewSortBy: viewAll,
+            viewCategory: viewAll,
             dropdown_distance: require('../../images/dropdown.png'),
             dropdown_sort: require('../../images/dropdown.png'),
+            listCategory: data,
+            loading: 'loading...'
         };
     }
 
-    _addviewDistance(){
+    _addviewDistance() {
         var view = [];
-        var open ;
-        if(countClickDistance % 2==0){
+        var open;
+        if (countClickDistance % 2 == 0) {
             open = require('../../images/dropdown.png');
-        }else {
+        } else {
             for (var i = 0; i < DISTANCE_OPTION.length; i++) {
                 var viewOptiom =
-                    <View style={[styles.viewContentFilterItem1]}>
+                    <View key={i} style={[styles.viewContentFilterItem1]}>
 
                         <Text style={styles.textFilter}>{DISTANCE_OPTION[i]}</Text>
                         <Image style={styles.controlFilterImage}
@@ -53,21 +61,21 @@ export default class SearchFilter extends Component {
         }
         this.setState({
             viewDistance: view,
-            dropdown_distance:open
+            dropdown_distance: open
         });
         return;
     }
 
 
-    _addviewSortBy(){
+    _addviewSortBy() {
         var view = [];
-        var open ;
-        if(countClickSortBy % 2==0){
+        var open;
+        if (countClickSortBy % 2 == 0) {
             open = require('../../images/dropdown.png');
-        }else {
+        } else {
             for (var i = 0; i < SORT_BY_OPTION.length; i++) {
                 var viewOptiom =
-                    <View style={[styles.viewContentFilterItem1]}>
+                    <View key={i} style={[styles.viewContentFilterItem1]}>
 
                         <Text style={styles.textFilter}>{SORT_BY_OPTION[i]}</Text>
                         <Image style={styles.controlFilterImage}
@@ -80,89 +88,137 @@ export default class SearchFilter extends Component {
         }
         this.setState({
             viewSortBy: view,
-            dropdown_sort:open
+            dropdown_sort: open
         });
-        return;
     }
 
-    _addviewCategory(){
-        var viewCategory =[];
-        for(var i = 0 ; i < 3 ; i++){
-            var view = <View style={styles.viewContentFilter1}>
+    componentDidMount() {
+        this._addViewDataCategory(categorySize+=categoryStepSize);
+    }
 
-                <Text style={styles.textFilter}>American(New)</Text>
-                <Switch
-                    onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
-                    style={styles.controlFilter}
-                    value={this.state.falseSwitchIsOn} />
+    _addViewDataCategory(check){
+        this.setState({
+            loading:'loading...'
+        })
+        var viewCategory = [];
+        if (this.state.listCategory.length > 2) {
+            for (var i = 0; i < check; i++) {
+                var view = <View key={i} style={styles.viewContentFilterCategory}>
 
-            </View>
+                    <Text style={styles.textFilter}>{this.state.listCategory[i].title}</Text>
+                    <Switch
+                        style={styles.controlFilter}
+                        value={this.state.falseSwitchIsOn}
+                        onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
+                        disabled={false}
+                        activeText={'On'}
+                        inActiveText={'Off'}
+                        backgroundActive={'#4cb4ff'}
+                        backgroundInactive={'#cccccc'}
+                        circleActiveColor={'#a50010'}
+                        circleInActiveColor={'#cccccc'}
+                    />
+                </View>
 
-            viewCategory.push(view);
+                viewCategory.push(view);
+            }
         }
-        return viewCategory;
+
+        this.setState({
+            loading: 'Load All',
+            viewCategory: viewCategory
+        })
+
     }
+    _getMoviesFromApiAsync() {
+        return fetch('../categories.json')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                //console.log("data category : "+ JSON.stringify(responseJson));
+                dataCategory = responseJson;
+                this.setState({
+                    listCategory: dataCategory
+                })
+                return responseJson
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     render() {
         let dropdown_icon = this.state.dropdown_open_icon ? require('../../images/ic_circle_select.png') : require('../../images/dropdown.png');
         return (
-            <View  style={styles.container}>
+            <View style={styles.container}>
                 <StatusBar
-                    barStyle = "light-content"/>
-               <View style={styles.actionBar}>
+                    barStyle="light-content"/>
+                <View style={styles.actionBar}>
                     <Text style={[styles.textActionBar, {textAlign:'left'}]}>Cancel</Text>
                     <Text style={[styles.textActionBar, {textAlign:'center'}]}>Filter</Text>
                     <Text style={[styles.textActionBar, {textAlign:'right'}]}>Search</Text>
-               </View>
+                </View>
 
-               <View style={styles.viewContent}>
+                <View style={styles.viewContent}>
+                    <ScrollView>
+                        <View style={styles.viewContentFilter1}>
+                            <Text style={styles.textFilter}>Offer Deals</Text>
+                            <Switch
+                                style={styles.controlFilter}
+                                value={this.state.falseSwitchIsOn}
+                                onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
+                                disabled={false}
+                                activeText={'On'}
+                                inActiveText={'Off'}
+                                backgroundActive={'#4cb4ff'}
+                                backgroundInactive={'#cccccc'}
+                                circleActiveColor={'#a50010'}
+                                circleInActiveColor={'#cccccc'}
+                            />
 
-                   <View style={styles.viewContentFilter1}>
-                       <Text style={styles.textFilter}>Offer Deals</Text>
-                       <Switch
-                           onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
-                           style={styles.controlFilter}
-                           value={this.state.falseSwitchIsOn} />
-                   </View>
+                        </View>
+
+                        <Text style={styles.textFilterTitle}>Distance</Text>
+                        <View style={styles.viewContentFilterContainer}>
+                            <TouchableOpacity style={styles.viewContentFilter1}
+                                              onPress={()=>{this._addviewDistance(countClickDistance++)}}>
+                                <Text style={styles.textFilter}>Auto</Text>
+                                <Image style={styles.controlFilterImage}
+                                       source={this.state.dropdown_distance}
+                                />
+                            </TouchableOpacity>
+                            <View style={styles.viewContentFilterContainer}>{this.state.viewDistance}</View>
+                        </View>
+
+                        <Text style={styles.textFilterTitle}>Sort By</Text>
+                        <View style={styles.viewContentFilterContainer}>
+                            <TouchableOpacity style={styles.viewContentFilter1}
+                                              onPress={()=>{this._addviewSortBy(countClickSortBy++)}}>
+                                <Text style={styles.textFilter}>Auto</Text>
+                                <Image style={styles.controlFilterImage}
+                                       source={this.state.dropdown_sort}
+                                />
+                            </TouchableOpacity>
+                            <View style={styles.viewContentFilterContainer}>{this.state.viewSortBy}</View>
+                        </View>
 
 
-                   <Text style={styles.textFilterTitle}>Distance</Text>
-                   <View style={styles.viewContentFilterContainer}>
-                       <TouchableOpacity style={styles.viewContentFilter1} onPress={()=>{this._addviewDistance(countClickDistance++)}}>
-                           <Text style={styles.textFilter}>Auto</Text>
-                           <Image style={styles.controlFilterImage}
-                           source={this.state.dropdown_distance}
-                           />
-                       </TouchableOpacity>
-                       <View style={styles.viewContentFilterContainer}>{this.state.viewDistance}</View>
-                   </View>
-
-
-
-                   <Text style={styles.textFilterTitle}>Sort By</Text>
-                   <View style={styles.viewContentFilterContainer}>
-                       <TouchableOpacity style={styles.viewContentFilter1} onPress={()=>{this._addviewSortBy(countClickSortBy++)}}>
-                           <Text style={styles.textFilter}>Auto</Text>
-                           <Image style={styles.controlFilterImage}
-                                  source={this.state.dropdown_sort}
-                           />
-                       </TouchableOpacity>
-                       <View style={styles.viewContentFilterContainer}>{this.state.viewSortBy}</View>
-                   </View>
-
-
-
-                   <Text style={styles.textFilterTitle}>Category</Text>
-                   <View>
-                       {this._addviewCategory()}
-                   </View>
-               </View>
-
+                        <Text style={styles.textFilterTitle}>Category</Text>
+                        <View>
+                            <View>{this.state.viewCategory}</View>
+                            <TouchableOpacity onPress={()=>{this._addViewDataCategory(categorySize+=categoryStepSize)}}   >
+                                <View style={styles.viewContentFilteCategory}>
+                                    <Text style={{textAlign:'center',flex:1}}>{this.state.loading}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </View>
             </View>
         );
     }
-
-
 }
+
+
 
 
 const styles = StyleSheet.create({
@@ -202,6 +258,21 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         padding:8,
+    },
+    viewContentFilterCategory:{
+        borderRadius: 4,
+        borderColor :'#cccccc',
+        borderWidth:1,
+        marginLeft:8,
+        marginRight:8,
+        flexDirection:'row',
+        alignItems:'center',
+        paddingLeft:8,
+        paddingRight:8,
+        paddingTop:4,
+        paddingBottom:4,
+        marginTop:4,
+        marginBottom:4,
     },
 
     viewContentFilterItem1:{

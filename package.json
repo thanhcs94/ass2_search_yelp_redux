@@ -11,6 +11,7 @@
     "react-native-busy-indicator": "^1.1.0",
     "react-native-loading-spinner-overlay": "^0.4.2",
     "react-native-modal-dropdown": "^0.4.2",
+    "react-native-switch": "^1.0.5",
     "react-redux": "^5.0.3",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0"

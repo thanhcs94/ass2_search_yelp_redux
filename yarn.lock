@@ -2145,6 +2145,22 @@ react-deep-force-update@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.0.1.tgz#f911b5be1d2a6fe387507dd6e9a767aa2924b4c7"
 
+react-native-busy-indicator@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-busy-indicator/-/react-native-busy-indicator-1.1.0.tgz#bdbd938980c81e6a5bba095c70228497e3011378"
+
+react-native-loading-spinner-overlay@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-loading-spinner-overlay/-/react-native-loading-spinner-overlay-0.4.2.tgz#a906d781a0fcecf793491d800d2f5b3eeadf7c3b"
+
+react-native-modal-dropdown@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-modal-dropdown/-/react-native-modal-dropdown-0.4.2.tgz#a4223823d0aa04eb45c451ded429845c25d62fd3"
+
+react-native-switch@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-switch/-/react-native-switch-1.0.5.tgz#bbf4952eefdb9c400081bce29f91cc7c2ac14c30"
+
 react-native@0.42.3:
   version "0.42.3"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.42.3.tgz#450c8a03a5e3e991a08a426f22776dd8feb80b26"

@@ -39,13 +39,13 @@ class App extends Component {
         const { isAuthenticated } = this.props;
         console.log("isAuthenticated " +  JSON.stringify(this.props));
         if (!isAuthenticated) {
-            return <SearchFilter/>;
+            return <SearchList/>;
         }else{
             console.log("data" +  JSON.stringify(this.props.user));
         }
         return (
             <Navigator
-                initialRoute={{name:"SearchFilter"}}
+                initialRoute={{name:"SearchList"}}
                 renderScene={this.renderScene.bind(this)}
             />
         )
