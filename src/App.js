@@ -23,12 +23,12 @@ class App extends Component {
 
             case "SearchList":
                 return (
-                    <SearchList/>
+                    <SearchList onClickFilter={()=>{navigator.push({name:"SearchFilter"});}}/>
                 )
 
             case  "SearchFilter":
                 return (
-                    <SearchFilter/>
+                    <SearchFilter onClickBack={()=>{ navigator.pop();}}/>
                 )
             default:
                 return {}
@@ -39,7 +39,7 @@ class App extends Component {
         const { isAuthenticated } = this.props;
         console.log("isAuthenticated " +  JSON.stringify(this.props));
         if (!isAuthenticated) {
-            return <SearchList/>;
+            return <Login/>;
         }else{
             console.log("data" +  JSON.stringify(this.props.user));
         }

@@ -93,7 +93,7 @@ export default class SearchFilter extends Component {
     }
 
     componentDidMount() {
-        this._addViewDataCategory(categorySize+=categoryStepSize);
+        this._addViewDataCategory(categoryStepSize);
     }
 
     _addViewDataCategory(check){
@@ -153,7 +153,9 @@ export default class SearchFilter extends Component {
                 <StatusBar
                     barStyle="light-content"/>
                 <View style={styles.actionBar}>
+                    <TouchableOpacity style ={{flex:1}} onPress={()=>{this.props.onClickBack()}}>
                     <Text style={[styles.textActionBar, {textAlign:'left'}]}>Cancel</Text>
+                    </TouchableOpacity>
                     <Text style={[styles.textActionBar, {textAlign:'center'}]}>Filter</Text>
                     <Text style={[styles.textActionBar, {textAlign:'right'}]}>Search</Text>
                 </View>
@@ -228,10 +230,12 @@ const styles = StyleSheet.create({
     },
     actionBar:{
       backgroundColor:'#c00024',
-      height : 35,
-      marginTop:25,
+      height : 40,
+      marginTop:30,
       paddingLeft :10,
       paddingRight:10,
+      paddingBottom:10,
+      paddingTop:10,
       flexDirection:'row',
     },
     textActionBar:{
