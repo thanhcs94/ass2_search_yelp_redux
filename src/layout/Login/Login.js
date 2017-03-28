@@ -15,8 +15,9 @@ export default class Login extends Component {
                 <View style = {styles.logoConten}>
                     <Image
                         style = {styles.logo}
-                        source={require('../../images/ic_launcher.png')} />
-                    <Text style = {styles.titleApp}>An App make for github using React native</Text>
+                        source={require('../../images/ic_yelp.png')} />
+                    <Text style = {styles.titleAppBig}>OMG I'M SO HUNGRY
+                    </Text>
                 </View>
                 <LoginForm style ={{flex:0}}/>
             </View>
@@ -28,23 +29,30 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1B8057',
+        backgroundColor:'#c02542',
     },
     logoConten:{
         flexGrow :1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    titleAppBig: {
+        width : 300,
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10,
+        color :'#ffffff',
+        fontWeight:'700'
+    },
     titleApp: {
-        width : 200,
+        width : 300,
         fontSize: 18,
         textAlign: 'center',
         margin: 10,
         color :'#ffffff'
     },
     logo:{
-        width:60,
-        height: 60
+
     },
     instructions: {
         textAlign: 'center',

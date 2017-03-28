@@ -28,7 +28,7 @@ class App extends Component {
 
             case  "SearchFilter":
                 return (
-                    <SearchFilter onClickBack={()=>{ navigator.pop();}}/>
+                    <SearchFilter onClickBack={()=>{ navigator.pop({refresh:{}});}}/>
                 )
             default:
                 return {}

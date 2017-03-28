@@ -17,10 +17,12 @@ import {
     StatusBar,
     ActivityIndicator
 } from 'react-native';
+import {connect} from 'react-redux';
 const token = "sSdedQPhuRc8W-dn6p7e1Mlr6SmoJhLp2FHhUAHFHmHtRF7KYl2AjtEd9x7vOg4Hv9X0q54fUGH-9Dmz9VpQzqgSzmiFDYpYXARgZHiqkkkH9DsFdNUi4n2ciOTYWHYx";
-export default class SearchSample extends Component {
+class SearchSample extends Component {
     constructor(props){
         super(props);
+        tempParams = "",
         this.state={
             dataSource: new ListView.DataSource({
                 rowHasChanged:(r1, r2) => r1!==r2
@@ -28,10 +30,12 @@ export default class SearchSample extends Component {
             data:'',
             text:'',
             refreshing: false,
+            params : '',
         }
     }
 
     _onRefresh() {
+        console.log("REFRESH _onRefresh")
         this.setState({refreshing: true});
         this.getMoviesFromApiAsync().then(() => {
             this.setState({refreshing: false});
@@ -49,8 +53,11 @@ export default class SearchSample extends Component {
 //https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed
 //&attributes=deals&radius=5&sort_by=review_count&categories=Delis,alias,delis
 //&attributes=deals&radius=40000&sort_by=review_count&categories=
+//&attributes=deals&radius=40000&sort_by=review_count&categories=sandwiches,delis,grocery
+    //https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972&attributes=deals&radius=40000&sort_by=review_count&categories=airlines
     getMoviesFromApiAsync() {
-        const request = new Request('https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972', {
+        /** check is login*/
+        const request = new Request('https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972'+tempParams , {
             method: 'GET',
             headers: new Headers({
                 'content-type': 'application/json',
@@ -131,7 +138,36 @@ export default class SearchSample extends Component {
         )
     }
 
+    componentWillReceiveProps(props){
+
+    }
+
+
     render() {
+
+        /** check is login*/
+        const {dataSetting} = this.props;
+        console.log("REFRESHHHHHHHHHHHHHHHHHHHHH :"+ JSON.stringify(dataSetting))
+        if(dataSetting.isRefresh){
+            const {dataSetting} = this.props;
+            tempParams ="";
+            if(dataSetting.radius >1)
+                tempParams += "&radius="+dataSetting.radius;
+
+            if(!dataSetting.sort_by !=='')
+                tempParams += "&sort_by="+dataSetting.sort_by;
+
+            if(!dataSetting.categories !=='')
+                tempParams += "&categories="+dataSetting.categories;
+
+            if(dataSetting.attributes)
+                tempParams+="&attributes=deals"
+            console.log("REFRESH PAR :"+tempParams);
+            //"attributes":false,"radius":"8046.7","sort_by":"review_count","categories":"abruzzese, absinthebars"
+            this.getMoviesFromApiAsync();
+            dataSetting.isRefresh = false;
+        }
+
         if(this.state.dataSource.getRowCount() === 0){
             var rows = <View style={styles.containerLoading}>
                 <ActivityIndicator
@@ -151,6 +187,7 @@ export default class SearchSample extends Component {
           />
         }
                     style = {styles.listView}
+                    removeClippedSubviews={false}
                     dataSource = {this.state.dataSource}
                     renderRow  = {this.renderRow.bind(this)}
                     // use bind this to send context :  if not , props is not define in render row
@@ -180,6 +217,24 @@ export default class SearchSample extends Component {
         );
     }
 }
+
+// End of your component
+const mapStateToProps = (state) => {
+    console.log(" mapStateToProps DATA SETTING " + JSON.stringify(state.saveSetting))
+    //{"isRefresh":true,"attributes":false,"radius":"8046.7","sort_by":"review_count","categories":"abruzzese, absinthebars"}
+    return {
+        dataSetting: state.saveSetting
+        // attributes: state.saveSetting.attributes,
+        // radius: state.saveSetting.radius,
+        // sort_by: state.saveSetting.sort_by,
+        // categories: state.saveSetting.categories
+    }
+
+}
+
+// Maping storage of Redux to props of your component
+export default connect(mapStateToProps)(SearchSample);
+
 
 const  styles = StyleSheet.create({
     container: {

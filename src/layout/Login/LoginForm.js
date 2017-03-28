@@ -73,22 +73,26 @@ function mapDispatchToProps (dispatch) {
 
 const styles = StyleSheet.create({
     container: {
-        padding :20
+        padding :20,
+        marginBottom:50
     },
     input:{
         minWidth:300,
         flexWrap:'wrap',
         height : 40,
         backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingHorizontal : 10,
+        paddingHorizontal : 8,
         color:'#fff',
         marginBottom : 10,
+        borderRadius:6,
+
     },
     buttonContainer:{
-        backgroundColor: "#1980b9",
-        paddingVertical:10,
+        backgroundColor: "#3399CC",
+        paddingVertical:8,
         marginTop:15,
-        marginBottom:20
+        marginBottom:20,
+        borderRadius:3
     },
     loginButton:{
         color: '#ffffff',

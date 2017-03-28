@@ -16,19 +16,28 @@ import {
     TouchableOpacity,
     ScrollView
 } from 'react-native';
-import data      from '../../categories.json'
+import data from '../../categories.json'
 import { Switch } from 'react-native-switch';
+import {actionCreators} from '../../reducers/settingReducer';
+import {connect} from 'react-redux';
 const DISTANCE_OPTION = ["0.3 miles", "1 mile", "5 miles", "20 miles"];
+const DISTANCE_RETURN = ["0.3", "1", "5", "20"];
 const SORT_BY_OPTION = ["best_match", "rating", "review_count", "distance"];
 var countClickDistance = 0;
 var countClickSortBy = 0;
 var categorySize = 0;
-var categoryStepSize = 3;
-export default class SearchFilter extends Component {
+var categoryStepSize = 200;
+class SearchFilter extends Component {
     constructor(props) {
         super(props);
         viewAll = [];
         dataCategory = [];
+        tempCategory = [];
+        attributes= true,
+        radius= 1,
+        sort_by = "best_match",
+        categories= ""
+
         this.state = {
             viewDistance: viewAll,
             viewSortBy: viewAll,
@@ -36,7 +45,9 @@ export default class SearchFilter extends Component {
             dropdown_distance: require('../../images/dropdown.png'),
             dropdown_sort: require('../../images/dropdown.png'),
             listCategory: data,
-            loading: 'loading...'
+            loading: 'loading...',
+            titleDistance: 'Auto',
+            titleSortBy:'best_match',
         };
     }
 
@@ -46,23 +57,34 @@ export default class SearchFilter extends Component {
         if (countClickDistance % 2 == 0) {
             open = require('../../images/dropdown.png');
         } else {
-            for (var i = 0; i < DISTANCE_OPTION.length; i++) {
+            for (let i = 0; i < DISTANCE_OPTION.length; i++) {
                 var viewOptiom =
-                    <View key={i} style={[styles.viewContentFilterItem1]}>
-
+                    <TouchableOpacity  key={i} style={[styles.viewContentFilterItem1]} onPress={()=>{
+                        this.setState({
+                            titleDistance: DISTANCE_OPTION[i]
+                        })
+                        radius =  this._getMeter(DISTANCE_RETURN[i]);
+                        countClickDistance+=1;
+                        this._addviewDistance();
+                    }}>
                         <Text style={styles.textFilter}>{DISTANCE_OPTION[i]}</Text>
                         <Image style={styles.controlFilterImage}
                                source={require('../../images/ic_circle_select.png')}
                         />
-                    </View>
+
+                    </TouchableOpacity>
                 view.push(viewOptiom);
             }
             open = require('../../images/ic_expand.png');
         }
         this.setState({
             viewDistance: view,
-            dropdown_distance: open
+            dropdown_distance: open,
         });
+
+        this.setState({
+            radius:3000
+        })
         return;
     }
 
@@ -73,27 +95,33 @@ export default class SearchFilter extends Component {
         if (countClickSortBy % 2 == 0) {
             open = require('../../images/dropdown.png');
         } else {
-            for (var i = 0; i < SORT_BY_OPTION.length; i++) {
+            for (let i = 0; i < SORT_BY_OPTION.length; i++) {
                 var viewOptiom =
-                    <View key={i} style={[styles.viewContentFilterItem1]}>
-
+                    <TouchableOpacity  key={i} style={[styles.viewContentFilterItem1]} onPress={()=>{
+                        this.setState({
+                            titleSortBy: SORT_BY_OPTION[i]
+                        })
+                        sort_by =  SORT_BY_OPTION[i];
+                        countClickSortBy+=1;
+                        this._addviewSortBy();
+                    }}>
                         <Text style={styles.textFilter}>{SORT_BY_OPTION[i]}</Text>
                         <Image style={styles.controlFilterImage}
                                source={require('../../images/ic_circle_select.png')}
                         />
-                    </View>
+                    </TouchableOpacity>
                 view.push(viewOptiom);
             }
             open = require('../../images/ic_expand.png');
         }
         this.setState({
             viewSortBy: view,
-            dropdown_sort: open
+            dropdown_sort: open,
         });
     }
 
     componentDidMount() {
-        this._addViewDataCategory(categoryStepSize);
+        this._addViewDataCategory(4);
     }
 
     _addViewDataCategory(check){
@@ -102,14 +130,14 @@ export default class SearchFilter extends Component {
         })
         var viewCategory = [];
         if (this.state.listCategory.length > 2) {
-            for (var i = 0; i < check; i++) {
+            for (let i = 0; i < check; i++) {
                 var view = <View key={i} style={styles.viewContentFilterCategory}>
 
                     <Text style={styles.textFilter}>{this.state.listCategory[i].title}</Text>
                     <Switch
                         style={styles.controlFilter}
-                        value={this.state.falseSwitchIsOn}
-                        onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
+                        value={this.state.attributes}
+                        onValueChange={(value) => {this._addOrRemoveCategory(value, this.state.listCategory[i].alias)}}
                         disabled={false}
                         activeText={'On'}
                         inActiveText={'Off'}
@@ -125,10 +153,32 @@ export default class SearchFilter extends Component {
         }
 
         this.setState({
-            loading: 'Load All',
+            loading: 'Load more',
             viewCategory: viewCategory
         })
+    }
 
+    _addOrRemoveCategory(value, alias){
+        if(value){
+            tempCategory.push(alias)
+            console.log("ADD : "+alias);
+        }else{
+            var pos = tempCategory.indexOf(alias);
+            tempCategory.splice(pos, 1);
+            console.log("REMOVE : "+alias);
+        }
+
+        var temp = "";
+        categories = "";
+        for(let i = 0 ; i < tempCategory.length;i++){
+            if(i !==  (tempCategory.length-1)){ temp = ",";}else {temp=""}
+            categories+= tempCategory[i]+temp;
+        }
+    }
+
+
+    _getMeter(i) {
+        return (i/0.000621371192).toFixed(0);;
     }
     _getMoviesFromApiAsync() {
         return fetch('../categories.json')
@@ -147,17 +197,23 @@ export default class SearchFilter extends Component {
     }
 
     render() {
-        let dropdown_icon = this.state.dropdown_open_icon ? require('../../images/ic_circle_select.png') : require('../../images/dropdown.png');
+        const {dispatch} = this.props;
         return (
             <View style={styles.container}>
                 <StatusBar
                     barStyle="light-content"/>
                 <View style={styles.actionBar}>
                     <TouchableOpacity style ={{flex:1}} onPress={()=>{this.props.onClickBack()}}>
-                    <Text style={[styles.textActionBar, {textAlign:'left'}]}>Cancel</Text>
+                        <Text style={[styles.textActionBar, {textAlign:'left'}]}>Cancel</Text>
                     </TouchableOpacity>
                     <Text style={[styles.textActionBar, {textAlign:'center'}]}>Filter</Text>
-                    <Text style={[styles.textActionBar, {textAlign:'right'}]}>Search</Text>
+
+                    <TouchableOpacity style ={{flex:1}} onPress={()=>{
+                        dispatch(actionCreators.storeDataSetting(attributes ,radius, sort_by ,categories))
+                        this.props.onClickBack()
+                    }}>
+                            <Text style={[styles.textActionBar, {textAlign:'right'}]}>Search</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.viewContent}>
@@ -166,8 +222,8 @@ export default class SearchFilter extends Component {
                             <Text style={styles.textFilter}>Offer Deals</Text>
                             <Switch
                                 style={styles.controlFilter}
-                                value={this.state.falseSwitchIsOn}
-                                onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
+                                value={attributes}
+                                onValueChange={(value) => {attributes = value}}
                                 disabled={false}
                                 activeText={'On'}
                                 inActiveText={'Off'}
@@ -183,7 +239,7 @@ export default class SearchFilter extends Component {
                         <View style={styles.viewContentFilterContainer}>
                             <TouchableOpacity style={styles.viewContentFilter1}
                                               onPress={()=>{this._addviewDistance(countClickDistance++)}}>
-                                <Text style={styles.textFilter}>Auto</Text>
+                                <Text style={styles.textFilter}>{this.state.titleDistance}</Text>
                                 <Image style={styles.controlFilterImage}
                                        source={this.state.dropdown_distance}
                                 />
@@ -191,11 +247,11 @@ export default class SearchFilter extends Component {
                             <View style={styles.viewContentFilterContainer}>{this.state.viewDistance}</View>
                         </View>
 
-                        <Text style={styles.textFilterTitle}>Sort By</Text>
+                        <Text style={styles.textFilterTitle}>Sort by</Text>
                         <View style={styles.viewContentFilterContainer}>
                             <TouchableOpacity style={styles.viewContentFilter1}
                                               onPress={()=>{this._addviewSortBy(countClickSortBy++)}}>
-                                <Text style={styles.textFilter}>Auto</Text>
+                                <Text style={styles.textFilter}>{this.state.titleSortBy}</Text>
                                 <Image style={styles.controlFilterImage}
                                        source={this.state.dropdown_sort}
                                 />
@@ -219,7 +275,7 @@ export default class SearchFilter extends Component {
         );
     }
 }
-
+export default connect()(SearchFilter);
 
 
 

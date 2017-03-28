@@ -30,6 +30,17 @@ export default function loginReducer(state= initialState, action) {
                 failure: true,
                 errorMessage: action.error,
             });
+
+        case type.SAVE_SETTING: {
+            return {
+                ...state,
+                isRefresh :true,
+                attributes: action.attributes,
+                radius: action.radius,
+                sort_by: action.sort_by,
+                categories: action.categories
+            }
+        }
         case type.LOGOUT_REQUEST:
             return initialState;
         default:

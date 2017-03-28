@@ -21,7 +21,7 @@ export default class Ass2 extends Component {
   render() {
     return (
      <Provider store={store}>
-     <SearchList/>
+     <App/>
      </Provider>
     )}
 }
